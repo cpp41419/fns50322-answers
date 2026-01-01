@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    /* Emerald Green Brand Colors for Finance/Mortgage Broking */
+    --brand-50: #ECFDF5;
+    --brand-100: #D1FAE5;
+    --brand-200: #A7F3D0;
+    --brand-300: #6EE7B7;
+    --brand-400: #34D399;
+    --brand-500: #10B981;
+    --brand-600: #059669;
+    --brand-700: #047857;
+    --brand-800: #065F46;
+    --brand-900: #064E3B;
+    --golden: #F59E0B;
+
+    --background: 0 0% 100%;
+    --foreground: 224 71% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --ring: 160 84% 39%;
+    --radius: 0.75rem;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline font-bold tracking-tight;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-inter), system-ui, sans-serif;
+  }
+
+  .container { max-width: min(1100px, calc(100vw - 2rem)); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+/* Question Card Hover */
+.question-card {
+  @apply transition-all duration-200;
+}
+.question-card:hover {
+  @apply shadow-lg border-brand-300 -translate-y-1;
+}
+
+/* Category Card */
+.category-card {
+  @apply bg-white rounded-xl border border-slate-200 p-6 transition-all duration-200;
+}
+.category-card:hover {
+  @apply shadow-xl border-brand-400 -translate-y-2;
+}
+
+/* Tag Pill */
+.tag-pill {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-700 hover:bg-brand-200 transition-colors;
+}
+
+/* FAQ Schema Styling */
+.faq-answer {
+  @apply prose prose-slate max-w-none;
+}
+.faq-answer p { @apply mb-4 last:mb-0; }
+.faq-answer ul { @apply list-disc pl-5 mb-4; }
+.faq-answer ol { @apply list-decimal pl-5 mb-4; }
+
+/* Finance-specific accent styles */
+.finance-highlight {
+  @apply bg-gradient-to-r from-brand-50 to-brand-100 border-l-4 border-brand-500 p-4 rounded-r-lg;
+}
+
+.module-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-mono font-medium bg-slate-100 text-slate-700;
+}
+
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+}

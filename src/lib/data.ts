@@ -40,6 +40,17 @@ export interface QuestionDetail extends Question {
   }>;
 }
 
+interface DBCategory {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+  module_code: string | null;
+  sort_order: number;
+}
+
 // Fetch all categories with question counts
 export async function getCategories(): Promise<Category[]> {
   const supabase = await createClient();
@@ -56,7 +67,7 @@ export async function getCategories(): Promise<Category[]> {
 
   // Get question counts
   const categoriesWithCounts = await Promise.all(
-    categories.map(async (category) => {
+    (categories as DBCategory[]).map(async (category) => {
       const { count } = await supabase
         .from("questions")
         .select("id", { count: "exact", head: true })
@@ -71,6 +82,20 @@ export async function getCategories(): Promise<Category[]> {
   );
 
   return categoriesWithCounts;
+}
+
+interface DBQuestionWithCategory {
+  id: string;
+  slug: string;
+  question: string;
+  answer: string;
+  module_code: string | null;
+  tags: string[] | null;
+  views: number;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
+  category: { id: string; slug: string; title: string } | null;
 }
 
 // Fetch popular/featured questions
@@ -101,9 +126,10 @@ export async function getPopularQuestions(limit = 5): Promise<Question[]> {
     return [];
   }
 
-  return (data || []).map((q) => ({
+  return ((data || []) as DBQuestionWithCategory[]).map((q) => ({
     ...q,
-    category: q.category as unknown as Question["category"],
+    tags: q.tags || [],
+    category: q.category as Question["category"],
   }));
 }
 
@@ -136,9 +162,10 @@ export async function getFeaturedQuestions(limit = 5): Promise<Question[]> {
     return [];
   }
 
-  return (data || []).map((q) => ({
+  return ((data || []) as DBQuestionWithCategory[]).map((q) => ({
     ...q,
-    category: q.category as unknown as Question["category"],
+    tags: q.tags || [],
+    category: q.category as Question["category"],
   }));
 }
 
@@ -150,15 +177,17 @@ export async function getQuestionsByCategory(categorySlug: string): Promise<{
   const supabase = await createClient();
 
   // Get category
-  const { data: category, error: catError } = await supabase
+  const { data: categoryData, error: catError } = await supabase
     .from("categories")
     .select("*")
     .eq("slug", categorySlug)
     .single();
 
-  if (catError || !category) {
+  if (catError || !categoryData) {
     return { category: null, questions: [] };
   }
+
+  const category = categoryData as DBCategory;
 
   // Get questions
   const { data: questions, error: qError } = await supabase
@@ -187,18 +216,35 @@ export async function getQuestionsByCategory(categorySlug: string): Promise<{
 
   return {
     category: { ...category, questionCount: questions?.length || 0 },
-    questions: (questions || []).map((q) => ({
+    questions: ((questions || []) as DBQuestionWithCategory[]).map((q) => ({
       ...q,
-      category: q.category as unknown as Question["category"],
+      tags: q.tags || [],
+      category: q.category as Question["category"],
     })),
   };
+}
+
+interface DBQuestion {
+  id: string;
+  slug: string;
+  question: string;
+  answer: string;
+  module_code: string | null;
+  tags: string[] | null;
+  views: number;
+  helpful_yes: number;
+  helpful_no: number;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
+  category: { id: string; slug: string; title: string; description?: string | null } | null;
 }
 
 // Fetch single question by slug
 export async function getQuestionBySlug(slug: string): Promise<QuestionDetail | null> {
   const supabase = await createClient();
 
-  const { data: question, error } = await supabase
+  const { data, error } = await supabase
     .from("questions")
     .select(`
       id,
@@ -219,15 +265,18 @@ export async function getQuestionBySlug(slug: string): Promise<QuestionDetail | 
     .eq("is_published", true)
     .single();
 
-  if (error || !question) {
+  if (error || !data) {
     return null;
   }
 
+  const question = data as unknown as DBQuestion;
+
   // Increment view count
-  supabase.rpc("increment_views", { question_id: question.id });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (supabase.rpc as any)("increment_views", { question_id: question.id });
 
   // Get related questions
-  const categoryData = question.category as { id: string; slug: string } | null;
+  const categoryData = question.category;
   let relatedQuestions: QuestionDetail["relatedQuestions"] = [];
 
   if (categoryData?.id) {
@@ -240,15 +289,16 @@ export async function getQuestionBySlug(slug: string): Promise<QuestionDetail | 
       .order("views", { ascending: false })
       .limit(3);
 
-    relatedQuestions = (related || []).map((r) => ({
+    relatedQuestions = (related || []).map((r: { slug: string; question: string; category: { slug: string } | null }) => ({
       slug: r.slug,
       question: r.question,
-      category_slug: (r.category as { slug: string } | null)?.slug || "",
+      category_slug: r.category?.slug || "",
     }));
   }
 
   return {
     ...question,
+    tags: question.tags || [],
     category: question.category as unknown as Question["category"],
     relatedQuestions,
   };
@@ -283,8 +333,9 @@ export async function searchQuestions(query: string, limit = 10): Promise<Questi
     return [];
   }
 
-  return (data || []).map((q) => ({
+  return ((data || []) as DBQuestionWithCategory[]).map((q) => ({
     ...q,
-    category: q.category as unknown as Question["category"],
+    tags: q.tags || [],
+    category: q.category as Question["category"],
   }));
 }

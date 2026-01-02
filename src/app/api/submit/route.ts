@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
-    const { error } = await supabase.from("submitted_questions").insert({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase.from("submitted_questions") as any).insert({
       question: validated.question,
       category: validated.category || null,
       email: validated.email || null,

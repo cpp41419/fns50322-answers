@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (categoryData) {
-      query = query.eq("category_id", categoryData.id);
+      const catId = (categoryData as { id: string }).id;
+      query = query.eq("category_id", catId);
     }
   }
 

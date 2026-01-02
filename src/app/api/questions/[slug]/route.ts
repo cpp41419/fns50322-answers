@@ -5,12 +5,27 @@ interface RouteParams {
   params: Promise<{ slug: string }>;
 }
 
+interface Question {
+  id: string;
+  slug: string;
+  question: string;
+  answer: string;
+  module_code: string | null;
+  tags: string[] | null;
+  views: number;
+  helpful_yes: number;
+  helpful_no: number;
+  created_at: string;
+  updated_at: string;
+  category: { id: string; slug: string; title: string; description: string | null } | null;
+}
+
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
   const supabase = await createClient();
 
   // Get the question
-  const { data: question, error } = await supabase
+  const { data, error } = await supabase
     .from("questions")
     .select(`
       id,
@@ -30,12 +45,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     .eq("is_published", true)
     .single();
 
-  if (error || !question) {
+  if (error || !data) {
     return NextResponse.json({ error: "Question not found" }, { status: 404 });
   }
 
+  const question = data as unknown as Question;
+
   // Increment view count (fire and forget)
-  supabase.rpc("increment_views", { question_id: question.id });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (supabase.rpc as any)("increment_views", { question_id: question.id });
 
   // Get related questions from same category
   const categoryData = question.category as { id: string } | null;

@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 
 const navLinks = [
   { href: "/questions", label: "All Questions" },
-  { href: "/quiz", label: "Course Quiz" },
+  { href: "/tools", label: "Tools" },
+  { href: "/broker-framework", label: "BROKER Framework" },
   { href: "/states", label: "State Guides" },
-  { href: "/submit", label: "Ask Question" },
 ];
 
 export default function Header() {

@@ -19,6 +19,10 @@
   }
 
   :root {
+    /* Font family variables with system font fallbacks */
+    --font-inter: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-poppins: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    
     /* Emerald Green Brand Colors for Finance/Mortgage Broking */
     --brand-50: #ECFDF5;
     --brand-100: #D1FAE5;

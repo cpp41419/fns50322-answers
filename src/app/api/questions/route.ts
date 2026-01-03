@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") || "10");
   const featured = searchParams.get("featured");
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   let query = supabase
     .from("questions")

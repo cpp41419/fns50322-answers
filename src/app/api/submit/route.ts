@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validated = submitSchema.parse(body);
 
-    const supabase = await createClient();
+    const supabase = createClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase.from("submitted_questions") as any).insert({

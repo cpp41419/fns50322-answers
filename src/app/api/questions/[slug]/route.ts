@@ -22,7 +22,7 @@ interface Question {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // Get the question
   const { data, error } = await supabase

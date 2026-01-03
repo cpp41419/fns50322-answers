@@ -53,7 +53,7 @@ interface DBCategory {
 
 // Fetch all categories with question counts
 export async function getCategories(): Promise<Category[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data: categories, error } = await supabase
     .from("categories")
@@ -100,7 +100,7 @@ interface DBQuestionWithCategory {
 
 // Fetch popular/featured questions
 export async function getPopularQuestions(limit = 5): Promise<Question[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("questions")
@@ -135,7 +135,7 @@ export async function getPopularQuestions(limit = 5): Promise<Question[]> {
 
 // Fetch featured questions
 export async function getFeaturedQuestions(limit = 5): Promise<Question[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("questions")
@@ -174,7 +174,7 @@ export async function getQuestionsByCategory(categorySlug: string): Promise<{
   category: Category | null;
   questions: Question[];
 }> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // Get category
   const { data: categoryData, error: catError } = await supabase
@@ -242,7 +242,7 @@ interface DBQuestion {
 
 // Fetch single question by slug
 export async function getQuestionBySlug(slug: string): Promise<QuestionDetail | null> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("questions")
@@ -306,7 +306,7 @@ export async function getQuestionBySlug(slug: string): Promise<QuestionDetail | 
 
 // Search questions
 export async function searchQuestions(query: string, limit = 10): Promise<Question[]> {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from("questions")

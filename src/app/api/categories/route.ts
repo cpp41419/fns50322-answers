@@ -13,7 +13,7 @@ interface Category {
 }
 
 export async function GET() {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { data: categories, error } = await supabase
     .from("categories")

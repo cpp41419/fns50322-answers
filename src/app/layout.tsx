@@ -1,26 +1,11 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { cn } from "@/lib/utils";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-inter",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-poppins",
-});
 
 const config = {
   name: process.env.NEXT_PUBLIC_SITE_NAME || "FNS50322 Answers",
@@ -68,9 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="overflow-x-hidden">
       <body className={cn(
-        "font-body antialiased min-h-screen flex flex-col overflow-x-hidden max-w-[100vw]",
-        inter.variable,
-        poppins.variable
+        "font-body antialiased min-h-screen flex flex-col overflow-x-hidden max-w-[100vw]"
       )}>
         <Header />
         <main id="main-content" className="flex-grow">{children}</main>

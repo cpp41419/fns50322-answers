@@ -5,10 +5,18 @@ import type { Database } from "@/types/database";
 
 // Simple client for API routes and server components (no auth needed)
 export function createClient() {
-  return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("Missing Supabase env vars:", {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseKey,
+    });
+    throw new Error("Missing Supabase environment variables");
+  }
+
+  return createSupabaseClient<Database>(supabaseUrl, supabaseKey);
 }
 
 // Client with cookie handling for authenticated routes
